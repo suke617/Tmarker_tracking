@@ -1,0 +1,22 @@
+<launch>
+
+<arg name="connect_mode" value="usb" />
+<arg name="right_w_addr" value="/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM00KCE3-if00-port0
+" />
+<arg name="left_w_addr" value="/dev/serial/by-id/usb-FTDI_FT230X_Basic_UART_DM00KIG4-if00-port0
+" />
+
+
+<node pkg="keigan_control" name="MonoColorTracking" type="color_tracking_node_depth.py" />
+
+<node pkg="keigan_control" name="twist" type="control_node.py" />
+
+<node pkg="km_dolly" name="km_dolly_wheels" type="km_wheels.py">
+  <param name="connect_mode" value="$(arg connect_mode)" />
+  <param name="right_w_addr" value="$(arg right_w_addr)" />
+  <param name="left_w_addr" value="$(arg left_w_addr)" />
+</node>
+
+
+
+</launch>
