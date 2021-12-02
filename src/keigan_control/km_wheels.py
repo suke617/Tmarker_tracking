@@ -37,7 +37,6 @@ def calc_input(omega_r,omega_l):
     ----------
     omega_r, omega_l : float
         angular velocities of the wheels
-
     Returns
     ----------
     v : float
@@ -62,7 +61,6 @@ def MotionModel(x,u,dt):
         Dolly velocity. Linear and yaw angular velocity of the dolly.
     dt : float
         The difference between the current and last timestamp.
-
     Returns
     ----------
     x : array
@@ -264,6 +262,7 @@ class KMWheels:
             self.right_velocity = new_right_velocity
             self.left_velocity = new_left_velocity
             self.run_ctrl_cmd()
+        rospy.loginfo(linear_speed)
 
     def run_ctrl_cmd(self):
         if self.left_velocity!=0:
@@ -302,6 +301,9 @@ def km_wheels_main():
             sleep(1)
         else:
             break
+
+    #ctrl+cしたときに実行
+    rospy.on_shutdown(shutdown)  
 
     while not rospy.is_shutdown():
         km_wheels.pubimu()

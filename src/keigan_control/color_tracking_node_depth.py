@@ -106,6 +106,7 @@ class ColorTracking:
         self.robot_position_publish = rospy.Publisher('robot_position', Int64MultiArray, queue_size=1)
         self.yaw_axis_data_publish = rospy.Publisher('yaw_axis_data', Int64, queue_size=1)
         self.autonomous_mode_publish = rospy.Publisher('autonomous_mode', Bool, queue_size=1)
+        self.depth_publish=rospy.Publisher('depth_data',Int64,queue_size=1)
         # set_param
         rospy.set_param('is_autonomous', False)
         self.count = 0
@@ -175,7 +176,7 @@ class ColorTracking:
 
         self.publish_robot_coordinate(top_center_x)
         self.publish_yaw_axis_data(bottom_center_x)
-
+        
         self.count = 0
         return True
 
@@ -196,6 +197,7 @@ class ColorTracking:
         # 領域のparameterをここでセット
         self.set_region_param(filterd_image, region_min_x, region_max_x, region_min_y, region_max_y, width, height)
         convert_x, convert_y, convert_z, depth = self.calculate_pixel_to_millimeter(float(height), center)
+        self.publish_depth_data(depth)
         self.set_robot_to_camera(convert_x, convert_y, convert_z)
         return True
 
@@ -267,7 +269,7 @@ class ColorTracking:
     ブロブ解析
     ラべリングを行い、ラベル付けされた塊の面積、位置、長さなどの特徴量を解析する手法
     '''
-    #imageをし
+    
     def analyze_label_data(self, image):
         labeling_image = cv2.connectedComponentsWithStats(image)
         #検出したオブジェクトの第三引数を取り出し、オブジェクトのサイズは使わないので削除
@@ -275,7 +277,6 @@ class ColorTracking:
         return labeling_image, labeling_data
 
     def blob_detection(self, labeling_image, labeling_data):
-        #オブジェクトのx座標、y座標、幅、高さを変数に渡す
         top_left_x = labeling_data[:, 0]
         top_left_y = labeling_data[:, 1]
         width = labeling_data[:, 2]
@@ -286,7 +287,7 @@ class ColorTracking:
         # 中心座標の解析
         center = np.delete(labeling_image[3], 0, 0).astype(np.int16)
         return center
-#
+
     def calculate_pixel_to_millimeter(self, height, center):
         """
         ピクセルデータをミリメートルに変換した値を返す　TODO:参考URLを。。
@@ -379,6 +380,9 @@ class ColorTracking:
 
     def publish_yaw_axis_data(self, yaw):
         self.yaw_axis_data_publish.publish(yaw)
+
+    def publish_depth_data(self,depth):
+        self.depth_publish.publish(depth)
 
     def transmit_control_mode(self, is_autonomous):
         is_control = rospy.get_param('is_autonomous', False)
