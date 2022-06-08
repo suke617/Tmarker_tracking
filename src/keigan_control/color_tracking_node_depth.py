@@ -11,7 +11,6 @@ from cv_bridge import CvBridge, CvBridgeError
 
 
 '''
-@ author 藤本
 領域を用いたトラッキング(最大面積を用いたcolor_tracking))
 '''
 
