@@ -344,7 +344,7 @@ class ColorTracking:
         _, extraction_image = cv2.threshold(gray_image, 240, 255, cv2.THRESH_BINARY)
         # cv2.imshow('1', extraction_image)
         # 膨張
-        # filterd_image = cv2.dilate(extraction_image, dilate)
+        filterd_image = cv2.dilate(extraction_image, dilate)
         # クロージング処理は膨張後に収縮
         filterd_image = cv2.morphologyEx(extraction_image, cv2.MORPH_CLOSE, self.MORPHOLOGY_KERNEL_CLOSE_1st)
         cv2.imshow('filterd_image', filterd_image)
